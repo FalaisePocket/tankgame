@@ -1,0 +1,4 @@
+repository "tankgame/tankgame@4673720081324@cloud"
+  path "/"
+    br "/main"
+    co "/main"
