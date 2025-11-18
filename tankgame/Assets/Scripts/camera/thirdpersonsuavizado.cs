@@ -6,6 +6,12 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
     [Header("Referencias")]
     public Transform objetivo;
 
+    [Header("Aim Target")]
+    public Transform target;
+    public Vector3 tagertOffSet = new Vector3(0, -2, 5);
+
+
+
     [Header("Configuración de Posición")]
     public Vector3 offset = new Vector3(0, 2, -5);
 
@@ -60,7 +66,20 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
         Quaternion rotacion = Quaternion.Euler(rotacionX, rotacionY, 0);
         Vector3 posicionDeseada = posicionObjetivo + rotacion * offset;
 
+        
+
         transform.position = posicionDeseada;
         transform.LookAt(posicionObjetivo + Vector3.up * 1.5f);
+
+
+
+        Quaternion rotacionTarget = Quaternion.Euler(rotacionX, rotacionY, 0); 
+        Vector3 posicionDeseadaTarget = posicionObjetivo + rotacionTarget * tagertOffSet;
+
+
+        target.transform.position = posicionDeseadaTarget;
+        target.transform.LookAt(posicionDeseadaTarget + Vector3.down * 1.5f);
+
+
     }
 }
