@@ -1,19 +1,54 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 
 public class TankController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float rotationSpeed = 100f;
+
+
+    [Header("Tank Stats")]
+    [SerializeField] public float moveSpeed = 5f;
+    [SerializeField] public float rotationSpeed = 100f;
+    public float fuerzaDisparo = 20f;
+    [Header("Tank Bindings")]
+    public GameObject balaPrefab;
+    public Transform puntoDisparo;
+    
+
+
+
 
     private float moveInput;
     private float rotateInput;
     private Rigidbody rb;
 
+    private PlayerInput playerInput;
+    private InputAction shootAction;
+
+    void Awake()
+    {
+        playerInput = GetComponent<PlayerInput>();
+
+        // Obtener la acción por nombre
+        shootAction = playerInput.actions["Shoot"];
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+    }
+
+    void OnEnable()
+    {
+        // Suscribirse al evento
+        shootAction.performed += OnShoot;
+    }
+
+    void OnDisable()
+    {
+        // Desuscribirse del evento
+        shootAction.performed -= OnShoot;
     }
 
     // IMPORTANTE: Debe ser público y tener exactamente este formato
@@ -27,6 +62,21 @@ public class TankController : MonoBehaviour
     {
         moveInput = context.ReadValue<float>();
         
+    }
+
+    public void OnShoot(InputAction.CallbackContext context)
+    {
+        // Crear instancia de la bala
+        GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
+
+        // Obtener el Rigidbody de la bala
+        Rigidbody rb = bala.GetComponent<Rigidbody>();
+
+        
+        // Aplicar fuerza a la bala
+        rb.AddForce(puntoDisparo.forward * fuerzaDisparo, ForceMode.Impulse);
+        
+
     }
 
     void FixedUpdate()
