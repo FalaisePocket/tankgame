@@ -21,7 +21,7 @@ public class IndicadorPosicion : MonoBehaviour
         canvas = indicadorUI.GetComponentInParent<Canvas>();
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (objetoASegir == null || indicadorUI == null) return;
 

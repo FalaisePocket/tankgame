@@ -6,26 +6,26 @@ public class TurretController : MonoBehaviour
     [Tooltip("Transform de la torreta (gira horizontalmente)")]
     public Transform turret;
 
-    [Tooltip("Transform del cañón (gira verticalmente)")]
+    [Tooltip("Transform del can (gira verticalmente)")]
     public Transform cannon;
 
     [Tooltip("Transform del objetivo a seguir")]
     public Transform target;
 
-    [Header("Configuración")]
-    [Tooltip("Velocidad de rotación de la torreta (grados/segundo)")]
+    [Header("Configuracin")]
+    [Tooltip("Velocidad de rotacin de la torreta (grados/segundo)")]
     public float turretRotationSpeed = 30f;
 
-    [Tooltip("Velocidad de rotación del cañón (grados/segundo)")]
+    [Tooltip("Velocidad de rotacin del can (grados/segundo)")]
     public float cannonRotationSpeed = 20f;
 
-    [Tooltip("Ángulo mínimo de elevación del cañón")]
+    [Tooltip("angulo minimo de elevacin del can")]
     public float minCannonAngle = -10f;
 
-    [Tooltip("Ángulo máximo de elevación del cañón")]
+    [Tooltip("angulo maximo de elevacin del can")]
     public float maxCannonAngle = 45f;
 
-    [Tooltip("Si está activo, la torreta seguirá al objetivo")]
+    [Tooltip("Si esta activo, la torreta seguira al objetivo")]
     public bool trackingEnabled = true;
 
     private void Start()
@@ -51,9 +51,9 @@ public class TurretController : MonoBehaviour
 
     private void AimAtTarget()
     {
-        // === ROTACIÓN DE LA TORRETA (Horizontal - Eje Y) ===
+        // === ROTACIN DE LA TORRETA (Horizontal - Eje Y) ===
         Vector3 directionToTarget = target.position - turret.position;
-        directionToTarget.y = 0; // Ignorar diferencia de altura para rotación horizontal
+        directionToTarget.y = 0; // Ignorar diferencia de altura para rotacin horizontal
 
         if (directionToTarget != Vector3.zero)
         {
@@ -65,54 +65,54 @@ public class TurretController : MonoBehaviour
             );
         }
 
-        // === ROTACIÓN DEL CAÑÓN (Vertical - Eje X) ===
+        // === ROTACIN DEL CAN (Vertical - Eje X) ===
         Vector3 directionFromCannon = target.position - cannon.position;
 
-        // Calcular el ángulo en el plano vertical
+        // Calcular el ngulo en el plano vertical
         float horizontalDistance = new Vector3(directionFromCannon.x, 0, directionFromCannon.z).magnitude;
         float targetAngle = Mathf.Atan2(directionFromCannon.y, horizontalDistance) * Mathf.Rad2Deg;
 
-        // Limitar el ángulo entre min y max
+        // Limitar el ngulo entre min y max
         targetAngle = Mathf.Clamp(targetAngle, minCannonAngle, maxCannonAngle);
 
-        // Obtener el ángulo actual del cañón
+        // Obtener el ngulo actual del can
         float currentXAngle = cannon.localEulerAngles.x;
         if (currentXAngle > 180f) currentXAngle -= 360f;
 
-        // Interpolar suavemente hacia el ángulo objetivo (invertido)
+        // Interpolar suavemente hacia el ngulo objetivo (invertido)
         float newXAngle = Mathf.MoveTowards(
             currentXAngle,
-            -targetAngle,  // Negativo para invertir la rotación
+            -targetAngle,  // Negativo para invertir la rotacin
             cannonRotationSpeed * Time.deltaTime
         );
 
-        // Aplicar solo rotación en X (local)
+        // Aplicar solo rotacin en X (local)
         cannon.localEulerAngles = new Vector3(newXAngle, 0, 0);
     }
 
-    // Método para activar/desactivar el seguimiento
+    // Mtodo para activar/desactivar el seguimiento
     public void SetTracking(bool enabled)
     {
         trackingEnabled = enabled;
     }
 
-    // Método para cambiar el objetivo
+    // Mtodo para cambiar el objetivo
     public void SetTarget(Transform newTarget)
     {
         target = newTarget;
     }
 
-    // Dibujar líneas de ayuda en el editor
+    // Dibujar lneas de ayuda en el editor
     private void OnDrawGizmos()
     {
         if (target == null || turret == null || cannon == null)
             return;
 
-        // Línea de la torreta al objetivo
+        // Lnea de la torreta al objetivo
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(turret.position, target.position);
 
-        // Dirección del cañón
+        // Direccin del can
         Gizmos.color = Color.red;
         Gizmos.DrawRay(cannon.position, cannon.forward * 5f);
     }

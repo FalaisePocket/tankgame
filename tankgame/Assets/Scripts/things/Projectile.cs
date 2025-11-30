@@ -4,12 +4,11 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float damage = 25f;
     [SerializeField] private float lifetime = 20f;
-    [SerializeField] private int speed = 10;
 
 
     void Start()
     {
-        // Destruir el proyectil después de un tiempo
+        // Destruir el proyectil despuï¿½s de un tiempo
         Destroy(gameObject, lifetime);
     }
 

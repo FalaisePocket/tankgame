@@ -4,13 +4,40 @@ public class EnemyController : MonoBehaviour
 {
     [Header("Stats")]
     [SerializeField] private float maxHealth = 100f;
-    public float currentHealth;
+    public float currentHealth=100f;
+    public float moveSpeed = 5f;
+    public float rotationSpeed = 100f;
+    public float turretRotationSpeed = 30f;
+    public float cannonRotationSpeed = 20f;
+    public float minCannonAngle = -10f;
+    public float maxCannonAngle = 45f;
+    public bool trackingEnabled = true;
+    public float fuerzaDisparo = 20f;
+
+
+    [Header("Inputs")]
+    private float moveInput;
+    private float rotateInput;
+    private float turretRotateInput;
+    private float cannonElevateInput;
+    private bool shootInput;
+
+    private Vector3 target;
+
     [Header("Modules")]
-    public Object cannon;
-    public Object turret;
-    public Object chasis;
-    public Object leftTrack;
-    public Object rightTrack;
+
+    public Rigidbody rb;
+    public Transform cannon;
+    public Transform turret;
+    public Transform chasis;
+    public Transform leftTrack;
+    public Transform rightTrack;
+    public Transform puntoDisparo;
+    [SerializeField] public GameObject balaPrefab;
+
+
+    public AgentTankAI agent; 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,8 +47,7 @@ public class EnemyController : MonoBehaviour
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
-        Debug.Log($"{gameObject.name} recibió {damage} de daño. Salud actual: {currentHealth}");
-
+        
         if (currentHealth <= 0)
         {
             Die();
@@ -37,11 +63,91 @@ public class EnemyController : MonoBehaviour
     {
         return currentHealth;
     }
+    
+
 
 
     // Update is called once per frame
     void Update()
     {
+        rotateInput = agent.rotate();
+        moveInput = agent.forward();
+        target = agent.aimAt();
+
+        if (agent.shoot())
+            Shoot();
+
+        if (!trackingEnabled || turret == null || cannon == null)
+            return;
+
+        AimAtTarget();
+    }
+
+    void FixedUpdate()
+    {
+        Vector3 move = new Vector3(0, 0, moveInput * moveSpeed * Time.fixedDeltaTime);
+        move = transform.TransformDirection(move); // Convierte de local a world space
+        rb.MovePosition(rb.position + move);
+
+        // Rotaciï¿½n
+        float rotation = rotateInput * rotationSpeed * Time.fixedDeltaTime;
+        Quaternion turnRotation = Quaternion.Euler(0f, rotation, 0f);
+        rb.MoveRotation(rb.rotation * turnRotation);
+    }
+
+
+
+    private void AimAtTarget()
+    {
+        // === ROTACIN DE LA TORRETA (Horizontal - Eje Y) ===
+        Vector3 directionToTarget = target - turret.position;
+        directionToTarget.y = 0; // Ignorar diferencia de altura para rotacin horizontal
+
+        if (directionToTarget != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            turret.rotation = Quaternion.RotateTowards(
+                turret.rotation,
+                targetRotation,
+                turretRotationSpeed * Time.deltaTime
+            );
+        }
+
+        // === ROTACIN DEL CAN (Vertical - Eje X) ===
+        Vector3 directionFromCannon = target - cannon.position;
+
+        // Calcular el ngulo en el plano vertical
+        float horizontalDistance = new Vector3(directionFromCannon.x, 0, directionFromCannon.z).magnitude;
+        float targetAngle = Mathf.Atan2(directionFromCannon.y, horizontalDistance) * Mathf.Rad2Deg;
+
+        // Limitar el ngulo entre min y max
+        targetAngle = Mathf.Clamp(targetAngle, minCannonAngle, maxCannonAngle);
+
+        // Obtener el ngulo actual del can
+        float currentXAngle = cannon.transform.localEulerAngles.x;
+        if (currentXAngle > 180f) currentXAngle -= 360f;
+
+        // Interpolar suavemente hacia el ngulo objetivo (invertido)
+        float newXAngle = Mathf.MoveTowards(
+            currentXAngle,
+            -targetAngle,  // Negativo para invertir la rotacin
+            cannonRotationSpeed * Time.deltaTime
+        );
+
+        // Aplicar solo rotacin en X (local)
+        cannon.transform.localEulerAngles = new Vector3(newXAngle, 0, 0);
+    }
+
+    private void Shoot()
+    {
+        // Crear instancia de la bala
+        GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
+
+        // Obtener el Rigidbody de la bala
+        Rigidbody rb = bala.GetComponent<Rigidbody>();
+
         
+        // Aplicar fuerza a la bala
+        rb.AddForce(puntoDisparo.forward * fuerzaDisparo, ForceMode.Impulse);
     }
 }
