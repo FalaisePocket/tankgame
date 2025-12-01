@@ -7,6 +7,8 @@ public class TankController : MonoBehaviour
 
 
     [Header("Tank Stats")]
+    [SerializeField] public float currentHealth = 100f;
+    
     [SerializeField] public float moveSpeed = 5f;
     [SerializeField] public float rotationSpeed = 100f;
     public float fuerzaDisparo = 20f;
@@ -29,20 +31,34 @@ public class TankController : MonoBehaviour
     {
         playerInput = GetComponent<PlayerInput>();
 
-        // Obtener la acción por nombre
+        // Obtener la acciï¿½n por nombre
         shootAction = playerInput.actions["Shoot"];
     }
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
+        //rb.freezeRotation = true;
     }
 
     void OnEnable()
     {
         // Suscribirse al evento
         shootAction.performed += OnShoot;
+    }
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+    private void Die()
+    {
+        Debug.Log($"{gameObject.name} ha muerto!");
+        Destroy(gameObject);
     }
 
     void OnDisable()
@@ -51,7 +67,7 @@ public class TankController : MonoBehaviour
         shootAction.performed -= OnShoot;
     }
 
-    // IMPORTANTE: Debe ser público y tener exactamente este formato
+    // IMPORTANTE: Debe ser pï¿½blico y tener exactamente este formato
     public void OnRotateTank(InputAction.CallbackContext context)
     {
         rotateInput = context.ReadValue<float>();
@@ -86,7 +102,7 @@ public class TankController : MonoBehaviour
         move = transform.TransformDirection(move); // Convierte de local a world space
         rb.MovePosition(rb.position + move);
 
-        // Rotación
+        // Rotaciï¿½n
         float rotation = rotateInput * rotationSpeed * Time.fixedDeltaTime;
         Quaternion turnRotation = Quaternion.Euler(0f, rotation, 0f);
         rb.MoveRotation(rb.rotation * turnRotation);

@@ -51,44 +51,45 @@ public class TurretController : MonoBehaviour
 
     private void AimAtTarget()
     {
-        // === ROTACIN DE LA TORRETA (Horizontal - Eje Y) ===
-        Vector3 directionToTarget = target.position - turret.position;
-        directionToTarget.y = 0; // Ignorar diferencia de altura para rotacin horizontal
+        // === ROTACIÓN DE LA TORRETA (horizontal, global) ===
+        Vector3 dir = target.position - turret.position;
+        dir.y = 0;
 
-        if (directionToTarget != Vector3.zero)
+        if (dir.sqrMagnitude > 0.001f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            Quaternion look = Quaternion.LookRotation(dir);
             turret.rotation = Quaternion.RotateTowards(
                 turret.rotation,
-                targetRotation,
+                look,
                 turretRotationSpeed * Time.deltaTime
             );
         }
 
-        // === ROTACIN DEL CAN (Vertical - Eje X) ===
-        Vector3 directionFromCannon = target.position - cannon.position;
+        /// === ROTACIÓN DEL CAÑÓN (vertical, velocidad fija) ===
+        Vector3 dirCannon = target.position - cannon.position;
 
-        // Calcular el ngulo en el plano vertical
-        float horizontalDistance = new Vector3(directionFromCannon.x, 0, directionFromCannon.z).magnitude;
-        float targetAngle = Mathf.Atan2(directionFromCannon.y, horizontalDistance) * Mathf.Rad2Deg;
+        // Cálculo del ángulo vertical
+        float hDist = new Vector3(dirCannon.x, 0, dirCannon.z).magnitude;
+        float targetAngle = Mathf.Atan2(dirCannon.y, hDist) * Mathf.Rad2Deg;
 
-        // Limitar el ngulo entre min y max
+        // INVERTIR dirección si el cañón se mueve al revés
+        targetAngle = -targetAngle;
+
+        // Limitar ángulos permitidos
         targetAngle = Mathf.Clamp(targetAngle, minCannonAngle, maxCannonAngle);
 
-        // Obtener el ngulo actual del can
-        float currentXAngle = cannon.localEulerAngles.x;
-        if (currentXAngle > 180f) currentXAngle -= 360f;
+        // Obtener rotación actual en X
+        float currentX = cannon.localEulerAngles.x;
+        if (currentX > 180f) currentX -= 360f;
 
-        // Interpolar suavemente hacia el ngulo objetivo (invertido)
-        float newXAngle = Mathf.MoveTowards(
-            currentXAngle,
-            -targetAngle,  // Negativo para invertir la rotacin
-            cannonRotationSpeed * Time.deltaTime
-        );
+        // Calcular nueva rotación en X (velocidad fija)
+        float newX = Mathf.MoveTowards(currentX, targetAngle, cannonRotationSpeed * Time.deltaTime);
 
-        // Aplicar solo rotacin en X (local)
-        cannon.localEulerAngles = new Vector3(newXAngle, 0, 0);
+        // Aplicar solo rotación en X
+        cannon.localEulerAngles = new Vector3(newX, 0, 0);
+
     }
+
 
     // Mtodo para activar/desactivar el seguimiento
     public void SetTracking(bool enabled)
