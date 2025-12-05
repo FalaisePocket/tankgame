@@ -15,6 +15,10 @@ public class TankController : MonoBehaviour
     [Header("Tank Bindings")]
     public GameObject balaPrefab;
     public Transform puntoDisparo;
+
+    public GameObject cannon;
+    private ParticleSystem smokeCannon;
+    public GameObject hull;
     
 
 
@@ -33,12 +37,19 @@ public class TankController : MonoBehaviour
 
         // Obtener la acci�n por nombre
         shootAction = playerInput.actions["Shoot"];
+        hull.GetComponent<AudioSource>().volume = 0.05f;
+        hull.GetComponent<AudioSource>().Play();
+        
+        
+        smokeCannon = cannon.GetComponent<ParticleSystem>();
+
     }
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         //rb.freezeRotation = true;
+
     }
 
     void OnEnable()
@@ -82,15 +93,20 @@ public class TankController : MonoBehaviour
 
     public void OnShoot(InputAction.CallbackContext context)
     {
+        cannon.GetComponent<AudioSource>().Play();
         // Crear instancia de la bala
         GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
 
         // Obtener el Rigidbody de la bala
-        Rigidbody rb = bala.GetComponent<Rigidbody>();
+        Rigidbody rbShoot = bala.GetComponent<Rigidbody>();
 
         
         // Aplicar fuerza a la bala
-        rb.AddForce(puntoDisparo.forward * fuerzaDisparo, ForceMode.Impulse);
+        rbShoot.AddForce(puntoDisparo.forward * fuerzaDisparo, ForceMode.Impulse);
+        rb.AddForce(5*(-puntoDisparo.forward * fuerzaDisparo), ForceMode.Impulse);
+
+
+        smokeCannon.Play();
         
 
     }
@@ -106,5 +122,15 @@ public class TankController : MonoBehaviour
         float rotation = rotateInput * rotationSpeed * Time.fixedDeltaTime;
         Quaternion turnRotation = Quaternion.Euler(0f, rotation, 0f);
         rb.MoveRotation(rb.rotation * turnRotation);
+        if( moveInput != 0 || rotateInput != 0)
+        {
+            hull.GetComponent<AudioSource>().volume = 0.1f;
+        }
+        else
+        {
+            hull.GetComponent<AudioSource>().volume = 0.05f;
+        }
+        
+        
     }
 }

@@ -53,17 +53,43 @@ public class TurretController : MonoBehaviour
     {
         // === ROTACIÓN DE LA TORRETA (horizontal, global) ===
         Vector3 dir = target.position - turret.position;
-        dir.y = 0;
+        dir.y = 0; // eliminamos inclinación vertical
 
         if (dir.sqrMagnitude > 0.001f)
         {
-            Quaternion look = Quaternion.LookRotation(dir);
-            turret.rotation = Quaternion.RotateTowards(
-                turret.rotation,
-                look,
-                turretRotationSpeed * Time.deltaTime
-            );
+            // Calcular dirección objetivo en espacio GLOBAL
+            Quaternion targetRotation = Quaternion.LookRotation(dir);
+            float targetYAngle = targetRotation.eulerAngles.y;
+            
+            // Convertir a espacio LOCAL del parent (tanque)
+            Transform parent = turret.parent;
+            if (parent != null)
+            {
+                // Calcular diferencia entre rotación objetivo y rotación del tanque
+                float parentYAngle = parent.eulerAngles.y;
+                float localTargetY = targetYAngle - parentYAngle;
+                
+                // Normalizar ángulo
+                if (localTargetY > 180f) localTargetY -= 360f;
+                if (localTargetY < -180f) localTargetY += 360f;
+                
+                // Obtener rotación local actual
+                float currentLocalY = turret.localEulerAngles.y;
+                if (currentLocalY > 180f) currentLocalY -= 360f;
+                
+                // Mover suavemente hacia el ángulo objetivo
+                float newLocalY = Mathf.MoveTowardsAngle(
+                    currentLocalY,
+                    localTargetY,
+                    turretRotationSpeed * Time.deltaTime
+                );
+                
+                // Aplicar SOLO rotación LOCAL en Y
+                // Esto mantiene X y Z relativos al tanque
+                turret.localRotation = Quaternion.Euler(0, newLocalY, 0);
+            }
         }
+
 
         /// === ROTACIÓN DEL CAÑÓN (vertical, velocidad fija) ===
         Vector3 dirCannon = target.position - cannon.position;
