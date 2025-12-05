@@ -971,7 +971,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7235466032624725901, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
       propertyPath: investigateRadius
-      value: 50
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7235466032624725901, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
       propertyPath: obstacleLayer.m_Bits

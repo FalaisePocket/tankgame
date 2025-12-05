@@ -21,7 +21,7 @@ public class AgentTankAI : MonoBehaviour
 
     [Header("Sistema de Memoria")]
     public float memoryDuration = 5f;            // Cuánto tiempo recuerda la última posición (segundos)
-    public float investigateRadius = 3f;         // A qué distancia considera que llegó al punto de investigación
+    public float investigateRadius = 5f;         // A qué distancia considera que llegó al punto de investigación
 
     private Vector3 currentTarget;
     private bool canSeeEnemy = false;
@@ -242,16 +242,26 @@ public class AgentTankAI : MonoBehaviour
         // 1. Tenemos memoria de un enemigo
         // 2. No podemos verlo actualmente
         // 3. La memoria no ha expirado
-        // 4. Todavía no hemos llegado al punto
         bool shouldInvestigate = hasMemory && 
                                 !canSeeEnemy && 
-                                (Time.time - lastSeenTime <= memoryDuration) &&
-                                !HasReachedInvestigationPoint();
+                                (Time.time - lastSeenTime <= memoryDuration);
         
-        if (shouldInvestigate && !isInvestigating)
+        // Activar el flag si cumple condiciones
+        if (shouldInvestigate)
         {
-            isInvestigating = true;
-            Debug.Log($"[{gameObject.name}] Iniciando investigación de última posición conocida");
+            if (!isInvestigating)
+            {
+                isInvestigating = true;
+                Debug.Log($"[{gameObject.name}] Iniciando investigación de última posición conocida");
+            }
+        }
+        else
+        {
+            if (isInvestigating)
+            {
+                isInvestigating = false;
+                Debug.Log($"[{gameObject.name}] Terminando investigación");
+            }
         }
         
         return shouldInvestigate;
@@ -300,56 +310,55 @@ public class AgentTankAI : MonoBehaviour
 
     public float rotate()
     {
-        // Si no vemos enemigos pero tenemos memoria, investigar
-        if ((enemy == null || !canSeeEnemy) && ShouldInvestigate())
+        // Si estamos investigando, rotar hacia la última posición conocida
+        if (ShouldInvestigate())
         {
-            isInvestigating = true;
-            
             // Si ya llegamos al punto de investigación, limpiar memoria
             if (HasReachedInvestigationPoint())
             {
-                ClearMemory();
                 return 0f;
             }
 
             // Rotar hacia la última posición conocida
             Vector3 toLastPosition = (lastKnownPosition - tankBody.position).normalized;
-            float angles = Vector3.SignedAngle(tankBody.forward, toLastPosition, Vector3.up);
-            return Mathf.Clamp(angles / 45f, -1f, 1f);
+            float angle = Vector3.SignedAngle(tankBody.forward, toLastPosition, Vector3.up);
+            return Mathf.Clamp(angle / 45f, -1f, 1f);
         }
 
         if (enemy == null || !canSeeEnemy) return 0f;
 
         Vector3 toEnemy = (enemy.position - tankBody.position).normalized;
-        float angle = Vector3.SignedAngle(tankBody.forward, toEnemy, Vector3.up);
+        float angleToEnemy = Vector3.SignedAngle(tankBody.forward, toEnemy, Vector3.up);
 
-        return Mathf.Clamp(angle / 45f, -1f, 1f);
+        return Mathf.Clamp(angleToEnemy / 45f, -1f, 1f);
     }
 
     public float forward()
     {
         // Si estamos investigando, acercarse a la última posición conocida
-        if (isInvestigating && ShouldInvestigate())
+        if (ShouldInvestigate())
         {
-            float distances = Vector3.Distance(tankBody.position, lastKnownPosition);
+            float distance = Vector3.Distance(tankBody.position, lastKnownPosition);
             
-            // Si ya llegamos, detenerse
+            // Si ya llegamos, detenerse y limpiar memoria
             if (HasReachedInvestigationPoint())
             {
+                Debug.Log($"[{gameObject.name}] Llegó al punto de investigación, limpiando memoria");
+                ClearMemory();
                 return 0f;
             }
             
             // Moverse hacia la última posición conocida
-            return distances > investigateRadius ? 1f : 0f;
+            return 1f;
         }
 
         if (enemy == null || !canSeeEnemy) return 0f;
 
-        float distance = Vector3.Distance(tankBody.position, enemy.position);
+        float distanceToEnemy = Vector3.Distance(tankBody.position, enemy.position);
 
-        if (distance > idealDistance + 3f)
+        if (distanceToEnemy > idealDistance + 3f)
             return 1f;          // avanzar
-        else if (distance < idealDistance - 3f)
+        else if (distanceToEnemy < idealDistance - 3f)
             return -1f;         // retroceder
 
         return 0f;
@@ -358,7 +367,7 @@ public class AgentTankAI : MonoBehaviour
     public Vector3 aimAt()
     {
         // Si estamos investigando, apuntar hacia la última posición conocida
-        if (isInvestigating && ShouldInvestigate())
+        if (ShouldInvestigate())
         {
             currentTarget = lastKnownPosition + Vector3.up * 1.3f;
             return currentTarget;
