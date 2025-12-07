@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 5462537685054428035}
   - component: {fileID: 7235466032624725901}
   - component: {fileID: 4529324376326712918}
+  - component: {fileID: 8648840596321068664}
+  - component: {fileID: 7251886098474561552}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -30,7 +32,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330058505213998131}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -7.556431, y: 5.73551, z: -21.32137}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -162,6 +164,29 @@ MonoBehaviour:
   cannon: {fileID: 7676067582390786838}
   idealDistance: 25
   shootAngleTolerance: 5
+  visionRange: 200
+  visionCheckInterval: 0.2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 65
+  visionPoint: {fileID: 5285560674742639242}
+  memoryDuration: 120
+  investigateRadius: 5
+  initialInvestigationPoint: {fileID: 0}
+  useInitialPoint: 1
+  useNavMesh: 1
+  navAgent: {fileID: 7251886098474561552}
+  navMeshUpdateInterval: 0.5
+  waypointReachedDistance: 2
+  obstacleDetectionDistance: 10
+  avoidanceForce: 1
+  navigationObstacleLayer:
+    serializedVersion: 2
+    m_Bits: 55
+  raycastAngleStep: 15
 --- !u!114 &4529324376326712918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,6 +218,42 @@ MonoBehaviour:
   puntoDisparo: {fileID: 2905846953525106903}
   balaPrefab: {fileID: 691300588629159618, guid: 2aa8ac4ffc7be384aaf9b784523b8eed, type: 3}
   agent: {fileID: 7235466032624725901}
+--- !u!114 &8648840596321068664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330058505213998131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c039b9d34645d84f826b87a0a2e592e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankAIDebugger
+  agent: {fileID: 7235466032624725901}
+  controller: {fileID: 4529324376326712918}
+--- !u!195 &7251886098474561552
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330058505213998131}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 10
+  m_Speed: 0
+  m_Acceleration: 0
+  avoidancePriority: 50
+  m_AngularSpeed: 0
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 0
+  m_AutoRepath: 1
+  m_Height: 6.24
+  m_BaseOffset: 1.45
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &1398997669797189175
 GameObject:
   m_ObjectHideFlags: 0

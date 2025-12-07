@@ -51,6 +51,47 @@ public class TankAIDebugger : MonoBehaviour
             float distToMemory = Vector3.Distance(agent.tankBody.position, agent.GetLastKnownPosition());
             GUILayout.Label($"Dist to Memory: {distToMemory:F1}m (threshold: {agent.investigateRadius:F1}m)");
         }
+
+        // Info de navegación
+        if (agent.IsInvestigating())
+        {
+            GUILayout.Space(5);
+            GUI.color = Color.cyan;
+            GUILayout.Label("=== NAVEGACIÓN ===");
+            GUI.color = oldColor;
+            
+            GUILayout.Label($"Use NavMesh: {agent.useNavMesh}");
+            
+            if (agent.useNavMesh && agent.navAgent != null)
+            {
+                GUI.color = agent.navAgent.hasPath ? Color.green : Color.red;
+                GUILayout.Label($"Has Path: {agent.navAgent.hasPath}");
+                GUI.color = oldColor;
+                
+                if (agent.navAgent.hasPath)
+                {
+                    GUILayout.Label($"Path Status: {agent.navAgent.pathStatus}");
+                    GUILayout.Label($"Waypoints: {agent.navAgent.path.corners.Length}");
+                    GUILayout.Label($"Remaining Distance: {agent.navAgent.remainingDistance:F1}m");
+                }
+            }
+            else
+            {
+                // Detectar si hay obstáculos adelante (modo legacy)
+                RaycastHit hit;
+                bool hasObstacle = Physics.Raycast(
+                    agent.tankBody.position, 
+                    agent.tankBody.forward, 
+                    out hit,
+                    agent.obstacleDetectionDistance, 
+                    agent.navigationObstacleLayer
+                );
+                
+                GUI.color = hasObstacle ? Color.red : Color.green;
+                GUILayout.Label($"Obstacle Ahead: {hasObstacle} {(hasObstacle ? $"({hit.distance:F1}m)" : "")}");
+                GUI.color = oldColor;
+            }
+        }
         
         GUILayout.Space(10);
         
