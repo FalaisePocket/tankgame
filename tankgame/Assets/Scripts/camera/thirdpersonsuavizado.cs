@@ -11,27 +11,27 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
     public Transform target;
     public Vector3 tagertOffSet = new Vector3(0, -2, 5);
 
-    [Header("Configuración de Posición")]
+    [Header("Configuraciï¿½n de Posiciï¿½n")]
     public Vector3 offset = new Vector3(0, 2, -5);
 
-    [Header("Configuración de Rotación")]
+    [Header("Configuraciï¿½n de Rotaciï¿½n")]
     public float sensibilidadMouse = 2f;
 
-    [Header("Límites de Rotación")]
+    [Header("Lï¿½mites de Rotaciï¿½n")]
     public float limiteVerticalMin = -30f;
     public float limiteVerticalMax = 60f;
 
-    [Header("Configuración de Colisión")]
+    [Header("Configuraciï¿½n de Colisiï¿½n")]
     public LayerMask capaColision = ~0; // Todas las capas por defecto
     public float radioColision = 0.3f; // Radio del SphereCast
-    public float distanciaMinima = 0.5f; // Distancia mínima al objetivo
+    public float distanciaMinima = 0.5f; // Distancia mï¿½nima al objetivo
     public float suavizadoColision = 10f; // Velocidad de ajuste al colisionar
 
     private float rotacionX = 0f;
     private float rotacionY = 0f;
     private Vector2 mouseDelta;
     private Rigidbody rbObjetivo;
-    private float distanciaActual; // Distancia actual de la cámara
+    private float distanciaActual; // Distancia actual de la cï¿½mara
     private Vector3 direccionSuavizada;
     void Start()
     {
@@ -61,7 +61,7 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
     {
         if (objetivo == null) return;
 
-        // --- ROTACIÓN ---
+        // --- ROTACIï¿½N ---
         rotacionY += mouseDelta.x * sensibilidadMouse * 0.02f;
         rotacionX -= mouseDelta.y * sensibilidadMouse * 0.02f;
         rotacionX = Mathf.Clamp(rotacionX, limiteVerticalMin, limiteVerticalMax);
@@ -88,24 +88,24 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
     {
         RaycastHit hit;
 
-        // Punto de inicio ligeramente alejado del objetivo para evitar colisionar con él
+        // Punto de inicio ligeramente alejado del objetivo para evitar colisionar con ï¿½l
         Vector3 puntoInicio = origen + Vector3.up * 0.5f;
 
         // SphereCast para detectar colisiones
         if (Physics.SphereCast(puntoInicio, radioColision, direccion, out hit, distanciaMax, capaColision))
         {
-            // Si hay colisión, ajustar distancia
+            // Si hay colisiï¿½n, ajustar distancia
             float distanciaColision = hit.distance - radioColision;
             return Mathf.Max(distanciaColision, distanciaMinima);
         }
 
-        // También hacer un raycast al suelo para evitar atravesarlo
+        // Tambiï¿½n hacer un raycast al suelo para evitar atravesarlo
         Vector3 posicionCamara = origen + direccion * distanciaMax;
         if (Physics.Raycast(posicionCamara, Vector3.down, out hit, 2f, capaColision))
         {
             if (hit.distance < 0.5f)
             {
-                // La cámara está muy cerca del suelo, elevarla
+                // La cï¿½mara estï¿½ muy cerca del suelo, elevarla
                 float ajuste = (0.5f - hit.distance) / distanciaMax;
                 return distanciaMax * (1f - ajuste);
             }
@@ -115,46 +115,29 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
     }
 
     void ActualizarTarget(Vector3 posicionObjetivo, Quaternion rotacion)
+{
+    if (target == null) return;
+
+    // Rayo desde el centro de la cÃ¡mara hacia adelante
+    Vector3 origen = transform.position;
+    Vector3 direccion = transform.forward;
+
+    RaycastHit hit;
+
+    // Si golpea algo â†’ usar el punto de impacto
+    if (Physics.Raycast(origen, direccion, out hit, 200f, layerMask))
     {
-        /*
-        if (target == null) return;
-
-        // 1. Dirección de la cámara SUAVIZADA
-        Vector3 direccionBruta = rotacion * Vector3.forward;
-        direccionSuavizada = Vector3.Lerp(direccionSuavizada, direccionBruta, Time.deltaTime * 12f);
-
-        // 2. Origen ESTABLE (la cámara, no el personaje)
-        Vector3 origen = transform.position;
-
-        // 3. Cálculo base (offset fijo, estable)
-        Vector3 destinoBase = origen + direccionSuavizada * 30f;
-
-        // 4. Corrección SOLO si colisiona
-        RaycastHit hit;
-        if (Physics.Raycast(origen, direccionSuavizada, out hit, 30f, layerMask))
-        {
-            destinoBase = hit.point;
-        }
-
-        // 5. Movimiento suave del target
-        target.position = Vector3.Lerp(
-            target.position,
-            destinoBase,
-            Time.deltaTime * 20f
-        );*/
-
-
-        
-        if (target == null) return;
-
-        Quaternion rotacionTarget = Quaternion.Euler(rotacionX, rotacionY, 0);
-        Vector3 posicionDeseadaTarget = posicionObjetivo + rotacionTarget * tagertOffSet;
-
-        target.transform.position = posicionDeseadaTarget;
-        target.transform.LookAt(posicionDeseadaTarget + Vector3.down * 1.5f);
+        target.position = hit.point;
     }
+    else
+    {
+        // Si no golpea nada â†’ usar un punto lejano hacia adelante
+        target.position = origen + direccion * 1000f;
+    }
+}
 
-    // Visualización en el editor
+
+    // Visualizaciï¿½n en el editor
     void OnDrawGizmos()
     {
         if (objetivo == null || !Application.isPlaying) return;
@@ -163,11 +146,11 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
         Quaternion rotacion = Quaternion.Euler(rotacionX, rotacionY, 0);
         Vector3 direccion = rotacion * offset.normalized;
 
-        // Dibujar línea de la cámara
+        // Dibujar lï¿½nea de la cï¿½mara
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(posicionObjetivo, transform.position);
 
-        // Dibujar esfera de colisión
+        // Dibujar esfera de colisiï¿½n
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, radioColision);
     }

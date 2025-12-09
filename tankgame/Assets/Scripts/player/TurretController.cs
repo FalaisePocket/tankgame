@@ -51,6 +51,7 @@ public class TurretController : MonoBehaviour
 
     private void AimAtTarget()
     {
+        /*
         // === ROTACIÓN DE LA TORRETA (horizontal, global) ===
         Vector3 dir = target.position - turret.position;
         dir.y = 0; // eliminamos inclinación vertical
@@ -89,8 +90,46 @@ public class TurretController : MonoBehaviour
                 turret.localRotation = Quaternion.Euler(0, newLocalY, 0);
             }
         }
+        */
+// ===== ROTACIÓN DE LA TORRETA (CORREGIDA: usa espacio LOCAL del padre) =====
+Transform parent = turret.parent;
+if (parent == null) return;
+
+Vector3 dirWorld = target.position - turret.position;
+
+// proyectar sobre el plano "horizontal" del padre (usar parent.up)
+Vector3 dirProjected = Vector3.ProjectOnPlane(dirWorld, parent.up);
+
+if (dirProjected.sqrMagnitude > 0.001f)
+{
+    // Convertir la dirección proyectada al espacio LOCAL del padre
+    // (esto da la dirección relativa al forward/up del tanque)
+    Vector3 dirLocal = parent.InverseTransformDirection(dirProjected);
+
+    // Calcular el ángulo yaw objetivo en el espacio local del padre:
+    // atan2(x, z) -> 0 cuando apunta hacia forward (z+), positivo hacia la derecha (x+)
+    float targetY = Mathf.Atan2(dirLocal.x, dirLocal.z) * Mathf.Rad2Deg;
+
+    // Normalizar ángulo actual local
+    float currentY = turret.localEulerAngles.y;
+    if (currentY > 180f) currentY -= 360f;
+
+    // Interpolar suavemente
+    float newY = Mathf.MoveTowardsAngle(currentY, targetY, turretRotationSpeed * Time.deltaTime);
+
+    // Aplicar SOLO Y en local (mantener X/Z = 0 para evitar drift)
+    turret.localRotation = Quaternion.Euler(0f, newY, 0f);
+}
 
 
+
+
+        rotateCannon();
+
+    }
+
+    private void rotateCannon()
+    {/*
         /// === ROTACIÓN DEL CAÑÓN (vertical, velocidad fija) ===
         Vector3 dirCannon = target.position - cannon.position;
 
@@ -112,7 +151,88 @@ public class TurretController : MonoBehaviour
         float newX = Mathf.MoveTowards(currentX, targetAngle, cannonRotationSpeed * Time.deltaTime);
 
         // Aplicar solo rotación en X
-        cannon.localEulerAngles = new Vector3(newX, 0, 0);
+        //cannon.localEulerAngles = new Vector3(newX, 0, 0);
+        Vector3 finalRot = cannon.localEulerAngles;
+        finalRot.x = newX;
+        finalRot.y = 0;       // evita drift de rotación
+        finalRot.z = 0;
+        cannon.localEulerAngles = finalRot;*/
+        /*
+        Vector3 dir = target.position - cannon.position;
+
+        // h es la distancia horizontal (XZ)
+        float h = new Vector2(dir.x, dir.z).magnitude;
+
+        // ángulo vertical correcto
+        float angle = Mathf.Atan2(dir.y, h); 
+        
+        angle = -angle;  // Resultado en radianes
+
+        float finalRotation = Mathf.MoveTowardsAngle(
+            cannon.localEulerAngles.x,
+            angle * Mathf.Rad2Deg,             // convertir a grados
+            cannonRotationSpeed * Time.deltaTime
+        );
+
+        cannon.localEulerAngles = new Vector3(finalRotation, 0f, 0f);
+        */
+        /*
+        // Dirección hacia el objetivo
+    Vector3 dir = target.position - cannon.position;
+
+    // Distancia horizontal en XZ (hipotenusa del plano horizontal)
+    float horizontal = Mathf.Sqrt(dir.x * dir.x + dir.z * dir.z);
+
+    // Ángulo vertical (Atan2 usa Y vs horizontal)
+    float angle = Mathf.Atan2(dir.y, horizontal) * Mathf.Rad2Deg;
+
+    // Mantener tu inversión necesaria
+    angle = -angle;
+
+    // Limitar ángulos permitidos (si lo necesitas)
+    angle = Mathf.Clamp(angle, minCannonAngle, maxCannonAngle);
+
+    // Rotación actual del cañón en X (normalizada a -180..180)
+    float currentX = cannon.localEulerAngles.x;
+    if (currentX > 180f) currentX -= 360f;
+
+    // Nueva rotación en X con velocidad fija
+    float newX = Mathf.MoveTowards(
+        currentX,
+        angle,
+        cannonRotationSpeed * Time.deltaTime
+    );
+
+    // Aplicar solo X sin tocar Y/Z
+    cannon.localEulerAngles = new Vector3(newX, 0f, 0f);*/
+
+    // 1. Direccion hacia el objetivo en espacio GLOBAL
+    Vector3 dirWorld = target.position - cannon.position;
+
+    // 2. Convertir direccion al espacio LOCAL del cañón
+    Vector3 dirLocal = cannon.parent.InverseTransformDirection(dirWorld);
+
+    // 3. Calcular angulo vertical usando su propio eje local
+    float angle = Mathf.Atan2(dirLocal.y, dirLocal.z) * Mathf.Rad2Deg;
+
+    // 4. Invertir porque tu cañón lo necesita
+    angle = -angle;
+
+    // 5. Clamp
+    angle = Mathf.Clamp(angle, minCannonAngle, maxCannonAngle);
+
+    // 6. Rotación actual normalizada
+    float currentX = cannon.localEulerAngles.x;
+    if (currentX > 180f) currentX -= 360f;
+
+    float newX = Mathf.MoveTowards(currentX, angle, cannonRotationSpeed * Time.deltaTime);
+
+    cannon.localEulerAngles = new Vector3(newX, 0f, 0f);
+
+
+
+
+        
 
     }
 

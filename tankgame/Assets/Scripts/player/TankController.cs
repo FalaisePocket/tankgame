@@ -12,6 +12,10 @@ public class TankController : MonoBehaviour
     [SerializeField] public float moveSpeed = 5f;
     [SerializeField] public float rotationSpeed = 100f;
     public float fuerzaDisparo = 20f;
+    [Header("Tank Tasks")]
+    public float shootCooldown = 7f;
+    public float shootTimer = 0f;
+    public bool canShoot = true;
     [Header("Tank Bindings")]
     public GameObject balaPrefab;
     public Transform puntoDisparo;
@@ -93,6 +97,8 @@ public class TankController : MonoBehaviour
 
     public void OnShoot(InputAction.CallbackContext context)
     {
+        if (!canShoot) return;
+
         cannon.GetComponent<AudioSource>().Play();
         // Crear instancia de la bala
         GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
@@ -107,8 +113,22 @@ public class TankController : MonoBehaviour
 
 
         smokeCannon.Play();
-        
+        canShoot = false;
+        shootTimer = 0f;
 
+    }
+
+    void Update()
+    {
+        
+        if (!canShoot)
+        {
+            shootTimer += Time.deltaTime;
+            
+            if (shootTimer >= shootCooldown)
+                canShoot = true;
+            
+        }
     }
 
     void FixedUpdate()
