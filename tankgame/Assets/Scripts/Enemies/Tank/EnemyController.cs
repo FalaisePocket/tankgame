@@ -46,6 +46,7 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        EnemyIndicatorManager.instance.RegisterEnemy(transform);
     }
 
     public void TakeDamage(float damage)
@@ -59,6 +60,12 @@ public class EnemyController : MonoBehaviour
     }
     private void Die()
     {
+        // Se ejecuta cuando el enemigo muere o es destruido
+        if (EnemyIndicatorManager.instance != null)
+        {
+            EnemyIndicatorManager.instance.UnregisterEnemy(transform);
+        }
+        EnemyIndicatorManager.instance.UnregisterEnemy(transform);
         Debug.Log($"{gameObject.name} ha muerto!");
         Destroy(gameObject);
     }

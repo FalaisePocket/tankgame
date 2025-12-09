@@ -1,47 +1,52 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // Necesario para cargar escenas
+using UnityEngine.UI;
 
 public class gamerules : MonoBehaviour
 {
-
     public int maxEnemies = 10;
     public Vector3 spawnAreaMin = new Vector3(0f, 0f, 0f); 
     public GameObject enemyPrefab;
     public GameObject playerPrefab;
-    public float timeLeft = 3600f; // Tiempo en segundos
-    private GameObject player;
-    private GameObject[] enemies;
+    public float timeLeft = 600f;
 
+    // 👉 Referencia al panel de Game Over
+    public GameObject gameOverPanel;
 
+    private bool gameEnded = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        //spawnEnemies();
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        
+        if (gameEnded) return;
+
         timeLeft -= Time.deltaTime;
+
         if (timeLeft <= 0f)
         {
-            Debug.Log("Tiempo agotado. Has perdido.");
-            // Aquí puedes agregar lógica para finalizar el juego o reiniciar el nivel
-            timeLeft = 0f; // Evitar que el tiempo sea negativo
+            timeLeft = 0f;
+            GameOver();
         }
     }
-    private void spawnEnemies()
-    {
-        for (int i = 0; i < maxEnemies; i++)
-        {
-            Vector3 spawnPosition = new Vector3(
-                Random.Range(spawnAreaMin.x, spawnAreaMin.x + 50f),
-                spawnAreaMin.y,
-                Random.Range(spawnAreaMin.z, spawnAreaMin.z + 50f)
-            );
 
-            GameObject enemy = Instantiate(Resources.Load("Enemy"), spawnPosition, Quaternion.identity) as GameObject;
-        }
+    void GameOver()
+    {
+        gameEnded = true;
+        Time.timeScale = 0f; // Pausa el juego
+        gameOverPanel.SetActive(true);
+        Debug.Log("Tiempo agotado. Has perdido.");
+    }
+
+    // 👉 Se llama desde el botón Retry
+    public void RetryGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // 👉 Se llama desde el botón Main Menu
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu"); // Nombre de tu escena del menú
     }
 }
