@@ -9,7 +9,7 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
 
     [Header("Aim Target")]
     public Transform target;
-    public Vector3 tagertOffSet = new Vector3(0, -2, 5);
+    public Vector3 targetOffSet = new Vector3(0, 0, 0);
 
     [Header("Configuraci�n de Posici�n")]
     public Vector3 offset = new Vector3(0, 2, -5);
@@ -114,27 +114,25 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
         return distanciaMax;
     }
 
-    void ActualizarTarget(Vector3 posicionObjetivo, Quaternion rotacion)
+void ActualizarTarget(Vector3 posicionObjetivo, Quaternion rotacion)
 {
     if (target == null) return;
 
-    // Rayo desde el centro de la cámara hacia adelante
+    // Origen del rayo desde la posición de la cámara
     Vector3 origen = transform.position;
-    Vector3 direccion = transform.forward;
+
+    // Ajustar la dirección para apuntar más arriba
+    // Puedes modificar el valor 0.1f para controlar cuánto sube (valores más altos = más arriba)
+    Vector3 direccion = transform.forward + transform.up * targetOffSet.y;
+    direccion.Normalize(); // Normalizar para mantener la dirección correcta
 
     RaycastHit hit;
-
-    // Si golpea algo → usar el punto de impacto
-    if (Physics.Raycast(origen, direccion, out hit, 200f, layerMask))
-    {
+    if (Physics.Raycast(origen, direccion, out hit, 1000f, layerMask))
         target.position = hit.point;
-    }
     else
-    {
-        // Si no golpea nada → usar un punto lejano hacia adelante
         target.position = origen + direccion * 1000f;
-    }
 }
+
 
 
     // Visualizaci�n en el editor

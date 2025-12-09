@@ -501,6 +501,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -41.9, z: 0}
+--- !u!1001 &269359990
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 828055982505084908, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_Name
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6970789787389151662, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: enemy
+      value: 
+      objectReference: {fileID: 1052052752}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 188.96703
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 106.90996
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.033868365
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9994263
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 176.118
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971624364049948660, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bceebc4f0fc24674d9cd052527f16210, type: 3}
 --- !u!1 &325634195
 GameObject:
   m_ObjectHideFlags: 0
@@ -1363,7 +1424,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 2
+  m_VoxelSize: 0.8333333
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 0e32e70f587332342b0263ea857cf56b, type: 2}
   m_BuildHeightMesh: 0
@@ -6716,8 +6777,8 @@ MonoBehaviour:
   target: {fileID: 395793050}
   turretRotationSpeed: 30
   cannonRotationSpeed: 20
-  minCannonAngle: 10
-  maxCannonAngle: -45
+  minCannonAngle: -45
+  maxCannonAngle: 10
   trackingEnabled: 1
 --- !u!54 &1052052755
 Rigidbody:
@@ -8135,11 +8196,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   target: {fileID: 395793050}
-  tagertOffSet: {x: 0, y: -175, z: 1000}
+  targetOffSet: {x: 0, y: 0.25, z: 0}
   offset: {x: 0, y: 6, z: -10}
   sensibilidadMouse: 2
-  limiteVerticalMin: -30
-  limiteVerticalMax: 60
+  limiteVerticalMin: -40
+  limiteVerticalMax: 85
   capaColision:
     serializedVersion: 2
     m_Bits: 55
@@ -8765,3 +8826,4 @@ SceneRoots:
   - {fileID: 1972466406}
   - {fileID: 1326678738}
   - {fileID: 774060665}
+  - {fileID: 269359990}
