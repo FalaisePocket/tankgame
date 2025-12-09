@@ -32,7 +32,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 828055982505084908}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.9994263, z: -0, w: 0.033868365}
+  m_LocalRotation: {x: 0, y: 0.99942625, z: 0, w: 0.033870395}
   m_LocalPosition: {x: 160.9, y: 5.39, z: 270.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -205,10 +205,13 @@ MonoBehaviour:
   rotationSpeed: 100
   turretRotationSpeed: 30
   cannonRotationSpeed: 20
-  minCannonAngle: -10
-  maxCannonAngle: 45
+  minCannonAngle: -45
+  maxCannonAngle: 10
   trackingEnabled: 1
   fuerzaDisparo: 14612
+  shootCooldown: 1
+  shootTimer: 0
+  canShoot: 1
   rb: {fileID: 2699565572784453668}
   cannon: {fileID: 8318807955474551854}
   turret: {fileID: 6399573849234271285}
@@ -241,7 +244,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 828055982505084908}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 10
+  m_Radius: 5.5
   m_Speed: 0
   m_Acceleration: 0
   avoidancePriority: 50
@@ -250,7 +253,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 0
   m_AutoBraking: 0
   m_AutoRepath: 1
-  m_Height: 6.24
+  m_Height: 3.4
   m_BaseOffset: 1.45
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -681,7 +684,7 @@ Transform:
   m_GameObject: {fileID: 8822825821662801349}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 6.17}
+  m_LocalPosition: {x: 0, y: 0, z: 6.78}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -19,10 +19,14 @@ public class Projectile : MonoBehaviour
         // Intentar obtener el componente Health del objeto impactado
         EnemyController health = collision.gameObject.GetComponent<EnemyController>();
 
+
         if (health != null)
         {
             health.TakeDamage(damage);
         }
+
+        TankController playerHealth = collision.gameObject.GetComponent<TankController>();
+        playerHealth?.TakeDamage(damage);
 
         // Destruir el proyectil al impactar
         Destroy(gameObject);

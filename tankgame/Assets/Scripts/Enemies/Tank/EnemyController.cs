@@ -13,6 +13,10 @@ public class EnemyController : MonoBehaviour
     public float maxCannonAngle = 45f;
     public bool trackingEnabled = true;
     public float fuerzaDisparo = 20f;
+    [Header("Tasks")]
+    public float shootCooldown = 0.25f;
+    public float shootTimer = 0f;
+    public bool canShoot = true;
 
 
     [Header("Inputs")]
@@ -70,6 +74,14 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!canShoot)
+        {
+            shootTimer += Time.deltaTime;
+            
+            if (shootTimer >= shootCooldown)
+                canShoot = true;
+            
+        }
         rotateInput = agent.rotate();
         moveInput = agent.forward();
         target = agent.aimAt();
@@ -140,6 +152,7 @@ public class EnemyController : MonoBehaviour
 
     private void Shoot()
     {
+        if (!canShoot) return;
         // Crear instancia de la bala
         GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
 
@@ -149,5 +162,7 @@ public class EnemyController : MonoBehaviour
         
         // Aplicar fuerza a la bala
         rb.AddForce(puntoDisparo.forward * fuerzaDisparo, ForceMode.Impulse);
+        canShoot = false;
+        shootTimer = 0f;
     }
 }
