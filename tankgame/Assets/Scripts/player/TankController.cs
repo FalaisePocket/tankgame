@@ -8,6 +8,7 @@ public class TankController : MonoBehaviour
 
     [Header("Tank Stats")]
     [SerializeField] public float currentHealth = 100f;
+    [SerializeField] public float maxHealth = 100f;
     
     [SerializeField] public float moveSpeed = 5f;
     [SerializeField] public float rotationSpeed = 100f;
@@ -23,6 +24,7 @@ public class TankController : MonoBehaviour
     public GameObject cannon;
     private ParticleSystem smokeCannon;
     public GameObject hull;
+    public System.Action OnPlayerDeath;
     
 
 
@@ -52,6 +54,7 @@ public class TankController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        currentHealth = maxHealth;
         //rb.freezeRotation = true;
 
     }
@@ -63,6 +66,7 @@ public class TankController : MonoBehaviour
     }
     public void TakeDamage(float damage)
     {
+        Debug.Log($"{gameObject.name} ha recibido {damage} de daño.");
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
@@ -71,7 +75,10 @@ public class TankController : MonoBehaviour
     }
     private void Die()
     {
+        OnPlayerDeath?.Invoke();
         Debug.Log($"{gameObject.name} ha muerto!");
+        Time.timeScale = 0f; // Pausa el juego
+        Debug.Log("Tiempo agotado. Has perdido.");
         Destroy(gameObject);
     }
 

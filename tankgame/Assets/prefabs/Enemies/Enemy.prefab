@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 2699565572784453668}
   - component: {fileID: 6970789787389151662}
   - component: {fileID: 7665412935018262723}
-  - component: {fileID: 109748397278483250}
   - component: {fileID: 1788793899653418466}
   m_Layer: 0
   m_Name: Enemy
@@ -209,7 +208,7 @@ MonoBehaviour:
   maxCannonAngle: 10
   trackingEnabled: 1
   fuerzaDisparo: 14612
-  shootCooldown: 1
+  shootCooldown: 10
   shootTimer: 0
   canShoot: 1
   rb: {fileID: 2699565572784453668}
@@ -221,20 +220,6 @@ MonoBehaviour:
   puntoDisparo: {fileID: 8624415073636793170}
   balaPrefab: {fileID: 691300588629159618, guid: 2aa8ac4ffc7be384aaf9b784523b8eed, type: 3}
   agent: {fileID: 6970789787389151662}
---- !u!114 &109748397278483250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 828055982505084908}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c039b9d34645d84f826b87a0a2e592e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TankAIDebugger
-  agent: {fileID: 6970789787389151662}
-  controller: {fileID: 7665412935018262723}
 --- !u!195 &1788793899653418466
 NavMeshAgent:
   m_ObjectHideFlags: 0
