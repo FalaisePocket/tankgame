@@ -23,13 +23,14 @@ public class gamerules : MonoBehaviour
     private List<GameObject> enemies = new List<GameObject>();
     public Camera playerCamera;
     public GameObject ui;
+    private AudioSource audioSource;
 
 
     private bool gameEnded = false;
 
     void Start()
     {
-        
+        audioSource = GetComponent<AudioSource>();
         playerTank = player.GetComponent<TankController>();
         playerTank.OnPlayerDeath += OnPlayerKilled;
         SpawnEnemies();
@@ -53,8 +54,8 @@ public class gamerules : MonoBehaviour
 
     void GameOver()
     {
-
-        ui.SetActive(false);
+        audioSource.Pause();
+        //ui.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         gameEnded = true;
@@ -65,6 +66,7 @@ public class gamerules : MonoBehaviour
     }
     void winGame()
     {
+        audioSource.Pause();
         ui.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

@@ -17,6 +17,8 @@ public class EnemyIndicator : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        if (cam == null)
+            return;
 
         // Posición del enemigo con altura extra
         Vector3 worldPos = enemy.position + Vector3.up * heightOffset;

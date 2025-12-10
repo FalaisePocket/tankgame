@@ -82,7 +82,7 @@ public class TankController : MonoBehaviour
         Debug.Log("Tiempo agotado. Has perdido.");
         playerCamera.gameObject.SetActive(false);
         gameObject.SetActive(false);
-        //Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     void OnDisable()
