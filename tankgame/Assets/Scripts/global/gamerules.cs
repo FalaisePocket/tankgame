@@ -18,12 +18,15 @@ public class gamerules : MonoBehaviour
 
     // 👉 Referencia al panel de Game Over
     public GameObject gameOverPanel;
-    private List<GameObject> enemies;
+    public GameObject winGamePanel;
+    private List<GameObject> enemies = new List<GameObject>();
+
 
     private bool gameEnded = false;
 
     void Start()
     {
+        
         playerTank = player.GetComponent<TankController>();
         playerTank.OnPlayerDeath += OnPlayerKilled;
         SpawnEnemies();
@@ -60,7 +63,7 @@ public class gamerules : MonoBehaviour
         Cursor.visible = true;
         gameEnded = true;
         Time.timeScale = 0f; // Pausa el juego
-        //gameOverPanel.SetActive(true);
+        winGamePanel.SetActive(true);
         Debug.Log("Has ganado!");
     }
 
