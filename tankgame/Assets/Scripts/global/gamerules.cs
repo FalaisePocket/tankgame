@@ -19,7 +19,10 @@ public class gamerules : MonoBehaviour
     // 👉 Referencia al panel de Game Over
     public GameObject gameOverPanel;
     public GameObject winGamePanel;
+    public Camera gameOverCamera;
     private List<GameObject> enemies = new List<GameObject>();
+    public Camera playerCamera;
+    public GameObject ui;
 
 
     private bool gameEnded = false;
@@ -50,15 +53,19 @@ public class gamerules : MonoBehaviour
 
     void GameOver()
     {
+
+        ui.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         gameEnded = true;
         Time.timeScale = 0f; // Pausa el juego
         gameOverPanel.SetActive(true);
         Debug.Log("Tiempo agotado. Has perdido.");
+        gameOverCamera.gameObject.SetActive(true);
     }
     void winGame()
     {
+        ui.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         gameEnded = true;
@@ -115,6 +122,8 @@ public class gamerules : MonoBehaviour
     }
     void OnPlayerKilled()
     {
+        playerCamera.gameObject.SetActive(false);
+        gameOverCamera.gameObject.SetActive(true);
         GameOver();
     }
     bool AllEnemiesDead()

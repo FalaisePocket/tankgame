@@ -19,6 +19,7 @@ public class EnemyController : MonoBehaviour
     public bool canShoot = true;
 
 
+
     [Header("Inputs")]
     private float moveInput;
     private float rotateInput;
@@ -38,6 +39,7 @@ public class EnemyController : MonoBehaviour
     public Transform rightTrack;
     public Transform puntoDisparo;
     [SerializeField] public GameObject balaPrefab;
+    private AudioSource audioSource;
 
 
     public AgentTankAI agent; 
@@ -45,6 +47,7 @@ public class EnemyController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         currentHealth = maxHealth;
         EnemyIndicatorManager.instance.RegisterEnemy(transform);
     }
@@ -160,6 +163,7 @@ public class EnemyController : MonoBehaviour
     private void Shoot()
     {
         if (!canShoot) return;
+        audioSource.Play();
         // Crear instancia de la bala
         GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
 

@@ -60,7 +60,11 @@ public class CamaraTerceraPersonaSuavizado : MonoBehaviour
     void LateUpdate()
     {
         if (objetivo == null) return;
-
+        if (objetivo == null)
+        {
+        // Evitar que la cámara siga intentando moverse si el objetivo murió
+        return;
+        }
         // --- ROTACI�N ---
         rotacionY += mouseDelta.x * sensibilidadMouse * 0.02f;
         rotacionX -= mouseDelta.y * sensibilidadMouse * 0.02f;

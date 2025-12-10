@@ -25,6 +25,7 @@ public class TankController : MonoBehaviour
     private ParticleSystem smokeCannon;
     public GameObject hull;
     public System.Action OnPlayerDeath;
+    public Camera playerCamera;
     
 
 
@@ -79,7 +80,9 @@ public class TankController : MonoBehaviour
         Debug.Log($"{gameObject.name} ha muerto!");
         Time.timeScale = 0f; // Pausa el juego
         Debug.Log("Tiempo agotado. Has perdido.");
-        Destroy(gameObject);
+        playerCamera.gameObject.SetActive(false);
+        gameObject.SetActive(false);
+        //Destroy(gameObject);
     }
 
     void OnDisable()
