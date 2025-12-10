@@ -1734,7 +1734,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::gamerules
   maxEnemies: 5
-  spawnAreaMin: {x: 0, y: 0, z: 0}
   distanceBetween: 30
   spawnArea: {fileID: 1144538071}
   initialInvestigationPointObject: {fileID: 123509342}
@@ -11372,10 +11371,10 @@ SceneRoots:
   - {fileID: 1674623450}
   - {fileID: 1879757877}
   - {fileID: 349850031}
+  - {fileID: 1377378741}
   - {fileID: 764489299}
   - {fileID: 1326678738}
   - {fileID: 774060665}
   - {fileID: 562789680}
-  - {fileID: 1377378741}
   - {fileID: 128172743}
   - {fileID: 1830366080}
